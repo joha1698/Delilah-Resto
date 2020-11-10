@@ -1,0 +1,398 @@
+swagger: "2.0"
+info:
+  description: "Con esta API podrás realizar diferentes acciones sobre el sistema de pedidos de nuestro restaurante. Como cliente podrás registrarte, ver el listado de productos y realizar una orden. Como administrador, tendrás la posibilidad de recibir productos y actualizarlos"
+  version: "1.0.0"
+  title: "API Rest Delila Restaurante"
+  termsOfService: "http://swagger.io/terms/"
+  contact:
+    email: "joha1698@gmail.com"
+host: "localhost:2000"
+basePath: "/v1"
+schemes: 
+- "http"
+- "https"
+tags:
+- name: "Productos"
+  description: "Operaciones posibles sobre los productos"
+- name: "Pedidos"
+  description: "Operaciones posibles sobre los pedidos"
+- name: "Usuarios"
+  description: "Operaciones posibles sobre los usuarios"  
+paths:
+  /producto:
+    post:
+      tags:
+      - "Productos"
+      summary: "Agrega un nuevo producto a la base de datos"
+      description: "Con este endpoint, podrás agregar un nuevo producto a la base de datos de nuestro restaurante"
+      operationId: "agregarProducto"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Ingrese el nombre y el precio del producto que desea agregar"
+        required: true
+        schema:
+            type: "object"
+            properties:
+              nombreProducto:
+                type: "string"
+              precio:
+                type: "integer"
+      - in: "header"
+        name: "Authorization"
+        description: "Ingrese el token que se le asigno al momento de loguearse"
+        type: "string"
+      responses:
+        "200":
+          description: "El producto (nombre del producto) se creó exitosamente con el id (id del producto creado)"
+        "500":
+          description: "Error interno del servidor"
+    put:
+      tags:
+      - "Productos"
+      summary: "Actualiza un producto en la base de datos"
+      description: "Con este endpoint, podrás actualizar un producto en la base de datos de nuestro restaurante"
+      operationId: "actualizarProducto"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Ingrese el objeto Producto con todas sus propiedades definidas en formato json, incluidas las propiedades que desea actualizar y el id del producto que desea modificar"
+        required: true
+        schema:
+          $ref: "#/definitions/Producto"
+      - in: "header"
+        name: "Authorization"
+        description: "Ingrese el token que se le asigno al momento de loguearse"
+        type: "string"
+      responses:
+        "200":
+          description: "Producto actualizado con exito"
+        "500":
+          description: "Error interno del servidor"
+    delete:
+      tags:
+      - "Productos"
+      summary: "Elimina un producto en la base de datos"
+      description: "Con este endpoint, podrás eliminar un producto de la base de datos"
+      operationId: "eliminarProducto"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+        - in: "query"
+          name: "idProducto"
+          required: true
+          type: "integer"
+          description: "Identificador del producto a eliminar"
+        - in: "header"
+          name: "Authorization"
+          description: "Ingrese el token que se le asigno al momento de loguearse"
+          type: "string"
+      responses:
+        "200":
+          description: "Producto eliminado exitosamente"
+        "500":
+          description: "Error interno del servidor"
+    get:
+      tags:
+      - "Productos"
+      summary: "Consulta un producto en la base de datos"
+      description: "Con este endpoint, tendrás la posibilidad de consultar un producto en la base de datos de nuestro restaurante"
+      operationId: "consultarProducto"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+        - in: "query"
+          name: "idProducto"
+          required: true
+          type: "integer"
+          description: "Identificador del producto a consultar"
+        - in: "header"
+          name: "Authorization"
+          description: "Ingrese el token que se le asigno al momento de loguearse"
+          type: "string"
+      responses:
+        "200":
+          description: "Productos consultados"
+          schema:
+            type: "array"
+            items:
+             $ref: "#/definitions/Producto"
+        "500":
+          description: "Error interno del servidor"
+  /productos:  
+    get:
+      tags:
+      - "Productos"
+      summary: "Consulta todos los productos en la base de datos"
+      description: "Con este endpoint, podrás consultar todos los productos en la base de datos de nuestro restaurante"
+      operationId: "consultarProductos"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+        - in: "header"
+          name: "Authorization"
+          description: "Ingrese el token que se le asigno al momento de loguearse"
+          type: "string"
+      responses:
+        "200":
+          description: "Te devuelve todos los productos disponibles con las siguientes propiedades de cada uno: id, nombreProducto y precio"
+          schema:
+            type: "array"
+            items:
+             $ref: "#/definitions/Producto"
+        "500":
+          description: "Error interno del servidor"
+  /pedidos:
+    post:
+      tags:
+      - "Pedidos"
+      summary: "Crea un pedido nuevo en la base de datos"
+      description: "Con este endpoint, tendrás la posibilidad de crear un nuevo pedido en la base de datos de nuestro restaurante"
+      operationId: "agregarPedido"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Ingrese el objeto Pedidos con todas sus propiedades definidas en formato json"
+        required: true
+        schema:
+          $ref: "#/definitions/Pedido"
+      - in: "header"
+        name: "Authorization"
+        description: "Ingrese el token que se le asigno al momento de loguearse"
+        type: "string"
+      responses:
+        "200":
+          description: "El pedido de ID (recibe id) fue creado con éxito"
+        "500":
+          description: "Error interno del servidor"
+    put:
+      tags:
+      - "Pedidos"
+      summary: "Modifica los datos de un pedido en la base de datos"
+      description: "Con este endpoint, tendrás la posibilidad de modificar los datos de un pedido en la base de datos de nuestro restaurante"
+      operationId: "actualizarPedido"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Ingrese el objeto Pedidos con todas sus propiedades definidas en formato json, incluidas las que va actualizar"
+        required: true
+        schema:
+          $ref: "#/definitions/Pedido"
+      - in: "header"
+        name: "Authorization"
+        description: "Ingrese el token que se le asigno al momento de loguearse"
+        type: "string"
+      responses:
+        "200":
+          description: "Pedido actualizado con exito"
+        "500":
+          description: "Error interno del servidor"    
+    get:
+      tags:
+      - "Pedidos"
+      summary: "Consulta un pedido en la base de datos"
+      description: "Con este endpoint, podrás consultar los datos de un pedido, con el id del pedido"
+      operationId: "consultarPedidos"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+        - in: "query"
+          name: "id"
+          required: true
+          type: "number"
+        - in: "header"
+          name: "Authorization"
+          description: "Ingrese el token que se le asigno al momento de loguearse"
+          type: "string"
+      responses:
+        "200":
+          description: "Pedido consultado"
+          schema:
+            type: "array"
+            items:
+             $ref: "#/definitions/Pedido"
+        "500":
+          description: "Error interno del servidor"  
+    delete:
+      tags:
+      - "Pedidos"
+      summary: "Elimina un pedido en la base de datos"
+      description: "Con este endpoint, podrás eliminar un pedido de la base de datos"
+      operationId: "eliminarPedido"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+        - in: "query"
+          name: "idProducto"
+          required: true
+          type: "integer"
+          description: "Ingrese el Id del pedido a eliminar"
+        - in: "header"
+          name: "Authorization"
+          description: "Ingrese el token que se le asigno al momento de loguearse"
+          type: "string"
+      responses:
+        "200":
+          description: "Producto eliminado exitosamente"
+        "500":
+          description: "Error interno del servidor"
+  /usuario:
+    post:
+      tags:
+      - "Usuarios"
+      summary: "Crea un nuevo usuario en la base de datos"
+      description: "Con este endpoint, tendrás la posibilidad de crear un nuevo usuario en la base de datos de nuestro restaurante"
+      operationId: "agregarUsuario"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Ingrese el objeto Usuarios con todas sus propiedades definidas en formato json"
+        required: true
+        schema:
+          $ref: "#/definitions/Usuario"
+      responses:
+        "200":
+          description: "Usuario creado exitosamente, su ID es (recibe id)"
+        "500":
+          description: "Error interno del servidor"
+    get:
+      tags:
+      - "Usuarios"
+      summary: "Consulta un usuario en la base de datos"
+      description: "Con este endpoint, podrás consultar los datos de un usuario, con el id del usuario"
+      operationId: "consultarUsuario"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+        - in: "query"
+          name: "id"
+          required: true
+          type: "number"
+        - in: "header"
+          name: "Authorization"
+          description: "Ingrese el token que se le asigno al momento de loguearse"
+          type: "string"
+      responses:
+        "200":
+          description: "Pedido consultado"
+          schema:
+            type: "array"
+            items:
+             $ref: "#/definitions/Pedido"
+        "500":
+          description: "Error interno del servidor"
+  /login:
+    post:
+        tags:
+        - "Usuarios"
+        summary: "Login de usuario"
+        description: "Con este endpoint, podrás loguearte en nuestra aplicación"
+        operationId: "loginUsuario"
+        consumes:
+        - "application/json"
+        produces:
+        - "application/json"
+        parameters:
+        - in: "body"
+          name: "body"
+          description: "Ingrese las propiedades email y contraseña del objeto Usuarios en formato json"
+          required: true
+          schema:
+            type: "object"
+            properties:
+              email:
+                type: "string"
+              contraseña:
+                type: "string"
+        responses:
+          "200":
+            description: "Obtiene exitosamente el Token"
+          "500":
+            description: "Error interno del servidor"
+definitions:
+  Producto:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64"
+      nombreProducto:
+        type: "string"
+      precio:
+        type: "integer"
+        format: "int64"
+  Pedido:
+    type: "object"
+    properties:
+      id_Producto:
+        type: "integer"
+        format: "int64" 
+      id_Usuario:
+        type: "integer" 
+        format: "int64"
+      id_EstadoPedido:
+        type: "integer"
+        format: "int64"
+      id_MetodoPago:
+        type: "integer"
+        format: "int64"
+      descripcionPedido:
+        type: "string"  
+  Usuario:
+    type: "object"
+    properties:
+      id:
+        type: "integer"
+        format: "int64" 
+      usuario:
+        type: "string"  
+      nombreCompleto:
+        type: "string" 
+      email:
+        type: "string"
+        format: "email"
+      telefono:
+        type: "integer"        
+      direccionEnvio:
+        type: "string"
+      contraseña:
+        type: "string"
+        format: "password"
+      rolUsuario:
+        type: "integer"
+        format: "int64"
+externalDocs:
+  description: "Find out more DelilahResto"
+  url: "http://localhost:2000/" 
